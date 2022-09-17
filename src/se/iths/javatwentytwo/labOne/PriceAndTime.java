@@ -6,11 +6,9 @@ import java.util.Scanner;
 public class PriceAndTime {
     Scanner scan = new Scanner(System.in);
 
-    private final String[] hours = new String[]{"00", "01", "02", "03", "04", "05", "06", "07", "08"};
-    private final int[] pricePerHour = new int[8];
-
-    public PriceAndTime(){
-    }
+    private final String[] hours = new String[]{"00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12",
+                                    "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23", "24"};
+    private final int[] pricePerHour = new int[24];
 
     public String[] getHours() {
         return hours;
@@ -30,11 +28,11 @@ public class PriceAndTime {
 
     /////////////////// MinMaxAverage ///////////////////
     public void printMinMaxAverage(){
-        System.out.println("Lägsta priset är: " + minPrice(getPricePerHour()) + " öre, kl " + minTimeStart(minPrice(getPricePerHour()), getPricePerHour()) +
-                "-" + minTimeStop(minTimeStart(minPrice(getPricePerHour()), getPricePerHour())));
-        System.out.println("Högsta priset är: " + maxPrice(getPricePerHour()) + " öre, kl " + maxTimeStart(maxPrice(getPricePerHour()), getPricePerHour()) +
-                "-" + maxTimeStop(maxTimeStart(maxPrice(getPricePerHour()), getPricePerHour())));
-        System.out.println("Dygnets medelpris är: " + averagePrice(getPricePerHour()) + " öre");
+        System.out.println("Lägsta priset är: " + minPrice(getPricePerHour()) + " öre, kl " + timeStart(minPrice(getPricePerHour()), getPricePerHour()) +
+                "-" + timeStop(timeStart(minPrice(getPricePerHour()), getPricePerHour())));
+        System.out.println("Högsta priset är: " + maxPrice(getPricePerHour()) + " öre, kl " + timeStart(maxPrice(getPricePerHour()), getPricePerHour()) +
+                "-" + timeStop(timeStart(maxPrice(getPricePerHour()), getPricePerHour())));
+        System.out.println("Dygnets medelpris är: " + averagePrice(sumPrices(getPricePerHour()), getPricePerHour().length) + " öre");
     }
 
     private int minPrice(int[] minPriceArray){
@@ -46,22 +44,6 @@ public class PriceAndTime {
         }
         return min;
     }
-    private String minTimeStart(int min, int[] minArray){
-        String minTimeStart = getHours()[0];
-        for (int i = 0; i < minArray.length; i++) {
-            if(min == minArray[i])
-                minTimeStart = getHours()[i];
-        }
-        return minTimeStart;
-    }
-    private String minTimeStop(String minTimeStart){
-        String minTimeStop = getHours()[0];
-        for (int i = 0; i < getHours().length; i++) {
-            if (minTimeStart.equals(getHours()[i]))
-                minTimeStop = getHours()[i+1];
-        }
-        return minTimeStop;
-    }
 
     private int maxPrice(int[] maxPriceArray){
         int max = maxPriceArray[0];
@@ -71,32 +53,32 @@ public class PriceAndTime {
         }
         return max;
     }
-    private String maxTimeStart(int min, int[] maxArray){
-        String maxTimeStart = getHours()[0];
-        for (int i = 0; i < maxArray.length; i++) {
-            if(min == maxArray[i])
-                maxTimeStart = getHours()[i];
+
+    private String timeStart(int min, int[] minArray){
+        String timeStart = getHours()[0];
+        for (int i = 0; i < minArray.length; i++) {
+            if(min == minArray[i])
+                timeStart = getHours()[i];
         }
-        return maxTimeStart;
+        return timeStart;
     }
-    private String maxTimeStop(String maxTimeStart){
-        String maxTimeStop = getHours()[0];
+
+    private String timeStop(String timeStart){
+        String timeStop = getHours()[0];
         for (int i = 0; i < getHours().length; i++) {
-            if (maxTimeStart.equals(getHours()[i]))
-                maxTimeStop = getHours()[i+1];
+            if (timeStart.equals(getHours()[i]))
+                timeStop = getHours()[i+1];
         }
-        return maxTimeStop;
+        return timeStop;
     }
 
-
-    private double averagePrice(int[] averageArray){
-        double sum = sumPrices(averageArray);
-        return sum / averageArray.length;
-    }
     private int sumPrices(int[] priceArray){
         int sum = 0;
         for (int j : priceArray) sum = j + sum;
         return sum;
+    }
+    private double averagePrice(int sum, int dividedBy){
+        return (double) sum / dividedBy;
     }
 
     ////////////////////// Sorting //////////////////////////
@@ -105,7 +87,7 @@ public class PriceAndTime {
         String[] copyTime = Arrays.copyOf(hours, hours.length);
         sortByPrice(copyPrice, copyTime);
         for (int i = 0; i < copyPrice.length; i++) {
-            System.out.println(copyTime[i] + "-" + copyTime[i] + " -> " + copyPrice[i] + " öre");
+            System.out.println(copyTime[i] + "-" + timeStop(copyTime[i]) + " -> " + copyPrice[i] + " öre");
         }
     }
 
@@ -127,15 +109,15 @@ public class PriceAndTime {
     /////////////////// BestRecharging //////////////////////
     public void printBestRecharging(){
         System.out.println("Den billigaste laddtiden under 4h är från kl: "  + bestRechargingTime() + ".00");
-        System.out.println("Medelpriset under dessa timmar är: " + averageBestPrice(bestRechargingPrice()));
+        System.out.println("Medelpriset under dessa timmar är: " + averagePrice(minPrice(bestRechargingPrice()), 4));
     }
 
     private String bestRechargingTime(){
-        return minTimeStart(minPrice(bestRechargingPrice()), bestRechargingPrice());
+        return timeStart(minPrice(bestRechargingPrice()), bestRechargingPrice());
     }
 
     private int[] bestRechargingPrice(){
-        int[] sum = new int[5];
+        int[] sum = new int[22];
         for (int i = 0; i < sum.length; i++) {
             int temp = 0;
             for (int j = i; j < i + 4; j++) {
@@ -144,10 +126,5 @@ public class PriceAndTime {
             sum[i] = temp;
         }
         return sum;
-    }
-
-    private double averageBestPrice(int[] bestRechargingPrice){
-        double min = minPrice(bestRechargingPrice);
-        return min / 4;
     }
 }
