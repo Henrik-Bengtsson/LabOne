@@ -18,6 +18,7 @@ public class LabOne {
         System.out.println("2. Min, Max och Medel");
         System.out.println("3. Sortera");
         System.out.println("4. Bästa Laddningtid (4h)");
+        System.out.println("5. Visualisering");
         System.out.println("e. Avsluta");
     }
 
@@ -31,6 +32,7 @@ public class LabOne {
                 case "2" -> priceAndTime.printMinMaxAverage();
                 case "3" -> priceAndTime.printSorted();
                 case "4" -> priceAndTime.printBestRecharging();
+                case "5" -> priceAndTime.printVisualization();
                 case "e" -> System.exit(0);
                 default -> System.out.println("Invalid option, choose again");
             }
